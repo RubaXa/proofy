@@ -1,0 +1,50 @@
+{
+  "name": "proofy",
+  "version": "0.1.0",
+  "description": "Proofy — A set of tools for creating and conducting experiments.",
+  "keywords": [
+    "proofy",
+    "experiments",
+    "a/b"
+  ],
+  "author": "RubaXa <ibn@rubaxa.org>",
+  "license": "MIT",
+  "main": "index.js",
+  "files": [
+    "*.js",
+    "*.js.map",
+    "*.d.ts"
+  ],
+  "scripts": {
+    "test": "jest --coverage",
+    "start": "npm test -- --watchAll",
+    "build": "npm run ts-build",
+    "build-clean": "npm run git-clean",
+    "ts-build": "tsc",
+    "git-clean": "git cliean -fd",
+    "prepublishOnly": "npm run test && npm run build",
+    "postpublish": "echo 'npm run git-clean?\n';"
+  },
+  "devDependencies": {
+    "@types/jest": "^24.0.23",
+    "@types/node": "^12.12.14",
+    "jest": "^24.9.0",
+    "ts-jest": "^24.2.0",
+    "typescript": "^3.7.2"
+  },
+  "dependencies": {},
+  "jest": {
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "testRegex": "\\.tests\\.ts$",
+    "transformIgnorePatterns": [],
+    "setupFilesAfterEnv": [],
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "json"
+    ]
+  }
+}
