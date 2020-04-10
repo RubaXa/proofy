@@ -31,35 +31,38 @@ export const appXEvents = xevent.group('App events', {
 
 	// События авторизации
 	auth: xevent.group('Авторизация', {
-		try: xevent(
-			'Попытка авторизации с шага "{data.step}" по "{data.type}" через "{data.type}"',
+		onTry: xevent(
+			({step, type, method}) => `Попытка авторизации с шага "${step.name}" по "${type.name}" через "${method.name}"`,
 			{
-				step: {
-					name: 'Шаг',
-					type: ['login', 'passwd', 'f-restore', ...], // enum
-				},
-				type: {
-					name: 'Тип',
-					type: ['password', 'qr', 'webauthn', ...]
-				},
-				method: {
-					name: 'Метод отправки формы',
-					type: ['submit', 'redirect']
-				},
+				step: xevent.enum('Шаг', {
+					'login': 'Ввод Логина',
+					'passwd': 'Ввод пароля',
+					'f-restore': 'Быстрый Вход',
+				}),
+				type: xevent.enum('Тип', {
+					'password': 'Пароль',
+					'qr': 'QR',
+					'webauthn': 'WebAuthn',
+				}),
+				method: xevent.enum('Метод отправки формы', {
+					'submit': 'Отправка Формы',
+					'redirect': 'JS Редирект',
+				}),
+			},
+		),
+
+		// Клик по кнопке, ссылки и т.п.
+		onClick: xevent(
+			({elem}) => `Клик по "${elem.name}"`,
+			{
+				elem: xevent.enum('Элемент', {
+					'signup': 'Регистрация',
+					'login': 'Вход'
+					'qrlink': 'QR',
+				}),
 			},
 		),
 	}),
-
-	// Клик по кнопке, ссылки и т.п.
-	click: xevent(
-		'Клик по "{data.elem}"',
-		{
-			elem: {
-				name: 'Элемент',
-				type: ['signup', 'login', 'qrlink'],
-			},
-		},
-	),
 });
 
 // Дальше, где-то в коде используем их.
@@ -70,6 +73,19 @@ document.addEventListener('DOMContentLoaded', () => {
 // Или упрощенная запись
 appXEvents.dom.ready.$bind(document, 'DOMContentLoaded');
 appXEvents.dom.unload.$bind(window, 'unload');
+```
+
+---
+
+### Соединяем с React
+
+```tsx
+export type AuthFormProps = WithXEvents<typeof appXEvents.auth> & {
+};
+
+export const AuthForm = xevent.connect([appXEvents.auth], function (props: AuthFormProps) {
+
+})
 ```
 
 ---

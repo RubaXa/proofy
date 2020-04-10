@@ -1,10 +1,14 @@
-import { createXEmitter } from './xemitter';
+import { createXEmitter, createXType } from '../xemitter/xemitter';
 import { createXGroup } from './xgroup';
 
 describe('xgroup', () => {
 	const dom = createXGroup('DOM Events', {
-		ready: createXEmitter('Ready', {foo: {name: 'Foo', type: String}}),
-		unload: createXEmitter('Unload', {bar: {name: 'Bar', type: Boolean}}),
+		ready: createXEmitter('Ready', {
+			foo: createXType('Foo', String),
+		}),
+		unload: createXEmitter('Unload', {
+			bar: createXType('Bar', Boolean),
+		}),
 	});
 	const app = createXGroup('App Events', {
 		dom,
@@ -30,8 +34,8 @@ describe('xgroup', () => {
 		it('$on', () => {
 			const log = [] as any[];
 			const off = app.$on((xevt) => {
-				if (dom.ready.$isEvent(xevt)) {
-					log.push(xevt.data.foo);
+				if ('foo' in xevt.data) {
+					log.push(xevt.data.foo, xevt.target.$path());
 				} else {
 					log.push(xevt.data.bar);
 				}
@@ -42,7 +46,7 @@ describe('xgroup', () => {
 			off();
 			app.dom.ready({foo: 'fail'});
 
-			expect(log).toEqual(['ok', true]);
+			expect(log).toEqual(['ok', ['dom', 'ready'], true]);
 		});
 	});
 });

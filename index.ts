@@ -1,5 +1,5 @@
-import { createXEmitter } from './src/xemitter';
-import { createXGroup } from './src/xgroup';
+import { createXEmitter } from './src/xemitter/xemitter';
+import { createXGroup } from './src/xgroup/xgroup';
 import { defineStaticProperies } from './src/utils';
 
 export * from './src/typing';

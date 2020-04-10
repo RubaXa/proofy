@@ -4,8 +4,8 @@ import {
 	XInit,
 	XGroupEvent,
 	XUnsubsribe,
-} from './typing';
-import { defineStaticProperies } from './utils';
+} from '../typing';
+import { defineStaticProperies } from '../utils';
 
 export function createXGroup<
 	D extends string,
@@ -27,8 +27,8 @@ export function createXGroup<
 
 		$path: () => path,
 
-		$on: (listener: (xevt: XGroupEvent<G>) => void) => {
-			const list = [] as XUnsubsribe<any>[];
+		$on: (listener: (xevt: XGroupEvent<G>) => void): XUnsubsribe => {
+			const list = [] as XUnsubsribe[];
 			
 			keys.forEach(key => {
 				list.push(group[key].$on(listener));
@@ -36,7 +36,6 @@ export function createXGroup<
 
 			return () => {
 				list.forEach(callUnsubsribe);
-				return descr;
 			};
 		},
 	});
@@ -57,6 +56,6 @@ export function createXGroup<
 }
 
 
-function callUnsubsribe(fn: XUnsubsribe<any>) {
+function callUnsubsribe(fn: XUnsubsribe) {
 	fn();
 }
