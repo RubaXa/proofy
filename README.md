@@ -8,15 +8,6 @@ npm i --save proofy
 
 ---
 
-### Features
-
-- Easy and Flexibility API 🧬
-- Supported IFrames (regardless of nesting) 💪🏻
-- Runtime logger & verbose mode ✴️
-- Fully testelably ✅
-
----
-
 ### 1. Describe xevents
 
 ```ts
