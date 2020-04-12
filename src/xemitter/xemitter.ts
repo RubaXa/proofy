@@ -32,14 +32,18 @@ export function createXEmitter<
 			return;
 		}
 
-		locked = true;
-
 		let idx = listeners.length;
+		if (idx === 0 || init && !init.group.$observed()) {
+			return;
+		}
+
 		let xevt = {
 			ts: Date.now(),
 			target: emit as XEmitter<D, A, I>,
 			data,
 		};
+
+		locked = true;
 
 		while (idx--) {
 			listeners[idx](xevt);
@@ -61,7 +65,7 @@ export function createXEmitter<
 
 		return () => {
 			const idx = listeners.indexOf(listener);
-			(idx > -1) && listeners.splice(idx, 1);
+			(idx !== -1) && listeners.splice(idx, 1);
 		};
 	}
 
@@ -89,11 +93,11 @@ export function createXEmitter<
 		}, {}) as XDescrArgs<A>);
 	}
 
-	function $filter(fn: (args: XArgs<A>) => boolean) {
+	function $filter(condition: (args: XArgs<A>) => boolean) {
 		return {
 			$on: (listener: (xevt: XEvent<D, A, I>) => void) => {
 				return $on((xevt) => {
-					fn(xevt.data) && listener(xevt);
+					condition(xevt.data) && listener(xevt);
 				});
 			},
 		};

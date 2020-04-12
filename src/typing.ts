@@ -41,7 +41,7 @@ export type XUnsubsribe = () => void;
 
 export type XInit = {
 	name: string;
-	group: XGroup<any, any, any>;
+	group: XGroup<string, XGroupSpec, XInit>;
 };
 
 export type XEvent<
@@ -77,6 +77,9 @@ export type XGroup<
 	G extends XGroupSpec,
 	I extends XInit,
 > = G & {
+	$observed(): boolean;
+	$use(extra?: WithXEventsBySpec<G, true>): WithXEventsBySpec<G, false>;
+	$keys: () => (keyof G)[]
 	$descr: () => D;
 	$clone: <NI extends XInit = I>(init?: NI) => XGroup<D, G, NI>;
 	$path: () => string[];
@@ -89,3 +92,23 @@ export type XGroupEvent<G extends XGroupSpec> = {
 		: XGroupEvent<G[K]>
 	;
 }[keyof G];
+
+export type WithXEvents<G> = G extends XGroup<any, infer S, any>
+	? WithXEventsBySpec<S, true>
+	: never
+;
+
+export type WithXEventsBySpec<S extends XGroupSpec, OPT extends boolean> = (
+	OPT extends true ? {
+		readonly [K in keyof S]?: S[K] extends XEmitter<any, infer A, any>
+			? (data: XArgs<A>) => void
+			: WithXEventsBySpec<S[K], OPT>
+		;
+	}
+	: {
+		readonly [K in keyof S]: S[K] extends XEmitter<any, infer A, any>
+			? (data: XArgs<A>) => void
+			: WithXEventsBySpec<S[K], OPT>
+		;
+	}
+);

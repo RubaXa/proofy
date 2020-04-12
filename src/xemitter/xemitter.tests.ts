@@ -1,4 +1,6 @@
 import { createXEmitter, createXType, createXEnum } from './xemitter';
+import { createXGroup } from '../xgroup/xgroup';
+import { WithXEvents } from '../typing';
 
 describe('xevent', () => {
 	const domReady = createXEmitter(({time}) => `DOM Ready at ${time.value} (${time.name})`, {
@@ -56,5 +58,58 @@ describe('xevent', () => {
 			expect(clickEvent.$descr()).toBe('Клик по "${elem.name}" (${elem.value})');
 			expect(clickEvent.$descr({elem: 'link'})).toBe(`Клик по "Ссылка" (link)`);
 		});
+	});
+});
+
+describe('xconnect', () => {
+	const appXEvents = createXGroup('App events', {
+		clickBy: createXEmitter(({el}) => `Click by "${el.name}"`, {
+			el: createXEnum('Element', {
+				'link': 'Link',
+				'btn': 'Button',
+			}),
+		}),
+
+		auth: createXGroup('Auth events', {
+			try: createXEmitter('Try auth', {}),
+		}),
+	});
+
+	type AppProps = {
+		xevents?: WithXEvents<typeof appXEvents>;
+	};
+
+	const App = function (props: AppProps) {
+		const xevents = appXEvents.$use(props.xevents);
+		xevents.clickBy({el: 'btn'});
+		xevents.auth.try({});
+	};
+
+	it('without extra', () => {
+		const log = [] as any[];
+		const off = appXEvents.$on(({target, data}) => {
+			log.push(target.$path().concat(data as any));
+		});
+
+		App({});
+		off();
+		expect(log).toEqual([['clickBy', {el: 'btn'}], ['auth', 'try', {}]]);
+	});
+	
+	it('with extra', () => {
+		const log = [] as any[];
+		const off = appXEvents.$on(({target, data}) => {
+			log.push(target.$path().concat(data as any));
+		});
+
+		App({
+			xevents: {
+				clickBy: () => {
+					log.push('over-click');
+				},
+			}
+		});
+		off();
+		expect(log).toEqual([['clickBy', {el: 'btn'}], 'over-click', ['auth', 'try', {}]]);
 	});
 });

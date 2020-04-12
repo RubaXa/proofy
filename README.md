@@ -31,7 +31,7 @@ export const appXEvents = xevent.group('App events', {
 
 	// События авторизации
 	auth: xevent.group('Авторизация', {
-		onTry: xevent(
+		try: xevent(
 			({step, type, method}) => `Попытка авторизации с шага "${step.name}" по "${type.name}" через "${method.name}"`,
 			{
 				step: xevent.enum('Шаг', {
@@ -52,7 +52,7 @@ export const appXEvents = xevent.group('App events', {
 		),
 
 		// Клик по кнопке, ссылки и т.п.
-		onClick: xevent(
+		сlickBy: xevent(
 			({elem}) => `Клик по "${elem.name}"`,
 			{
 				elem: xevent.enum('Элемент', {
@@ -77,15 +77,28 @@ appXEvents.dom.unload.$bind(window, 'unload');
 
 ---
 
-### Соединяем с React
+### Соединяем с React или с чем угодно
 
 ```tsx
-export type AuthFormProps = WithXEvents<typeof appXEvents.auth> & {
+export type AuthFormProps = {
+	xevents?: WithXEvents<typeof appXEvents.auth>;
 };
 
-export const AuthForm = xevent.connect([appXEvents.auth], function (props: AuthFormProps) {
+export function AuthForm(props: AuthFormProps) {
+	const xevents = appXEvents.auth.$use(props.xevents);
 
-})
+	// Где-то в коде трегирим событие
+	xevents.clickBy({elem: 'login'});
+};
+
+<AppForm
+	xevents={{
+		clickBy(data) {
+			console.log(data); // {elem: "login"}
+			console.log(appXEvents.auth.clickBy.$descr(data)); // Клик по "Вход"
+		},
+	}}
+/>
 ```
 
 ---

@@ -4,6 +4,7 @@ import {
 	XInit,
 	XGroupEvent,
 	XUnsubsribe,
+	WithXEventsBySpec,
 } from '../typing';
 import { defineStaticProperies } from '../utils';
 
@@ -16,9 +17,18 @@ export function createXGroup<
 	spec: G,
 	init?: I,
 ): XGroup<D, G, I> {
+	let listeners = 0;
 	const keys = Object.keys(spec);
 	const path = init ? init.group.$path().concat(init.name) : [] as string[];
-	const group = defineStaticProperies({}, <XGroup<D, G, I>>{
+	const group = defineStaticProperies({} as XGroup<D, G, I>, {
+		$use: (xevents?: WithXEventsBySpec<G, true>) => {
+			return overrideXEvents(group, xevents);
+		},
+
+		$observed: () => (listeners > 0) && (!init || init.group.$observed()),
+
+		$keys: () => keys,
+
 		$descr: () => descr,
 
 		$clone: <NI extends XInit = I>(ninit?: NI) => {
@@ -30,11 +40,13 @@ export function createXGroup<
 		$on: (listener: (xevt: XGroupEvent<G>) => void): XUnsubsribe => {
 			const list = [] as XUnsubsribe[];
 			
+			listeners++;
 			keys.forEach(key => {
 				list.push(group[key].$on(listener));
 			});
 
 			return () => {
+				listeners--;
 				list.forEach(callUnsubsribe);
 			};
 		},
@@ -55,7 +67,34 @@ export function createXGroup<
 	}, group);
 }
 
-
 function callUnsubsribe(fn: XUnsubsribe) {
 	fn();
+}
+
+function overrideXEvents(group: XGroup<any, any, any>, xevents?: WithXEventsBySpec<any, true>) {
+	if (xevents == null) {
+		return group;
+	}
+
+	return group.$keys().reduce((xover, key: string) => {
+		const orig = group[key];
+		const extra = xevents[key];
+
+		if (extra === void 0) {
+			xover[key] = orig;
+		} else if (orig.$keys !== void 0) {
+			xover[key] = overrideXEvents(group[key], extra as any);
+		} else {
+			xover[key] = function (data: object) {
+				orig(data);
+				try {
+					(extra as any).call(data);
+				} catch (err) {
+					console.error(err);
+				}
+			};
+		}
+
+		return xover;
+	}, {});
 }
