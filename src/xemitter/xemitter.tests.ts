@@ -53,8 +53,6 @@ describe('xevent', () => {
 		});
 
 		it('$descr', () => {
-			const ts = Date.now();
-	
 			expect(clickEvent.$descr()).toBe('Клик по "${elem.name}" (${elem.value})');
 			expect(clickEvent.$descr({elem: 'link'})).toBe(`Клик по "Ссылка" (link)`);
 		});

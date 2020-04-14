@@ -6,6 +6,7 @@ import {
 import { createXGroup } from './src/xgroup/xgroup';
 import { defineStaticProperies } from './src/utils';
 
+export * from './src/feature/feature';
 export * from './src/typing';
 
 export const xevent = defineStaticProperies(createXEmitter, {

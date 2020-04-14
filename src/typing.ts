@@ -59,7 +59,7 @@ export interface XEmitter<
 	A extends XArgsSpec,
 	I extends XInit,
 > {
-	(args: XArgs<A>): void
+	(args: XArgs<A>): void;
 	$args: () => A;
 	$path: () => string[];
 	$clone: <NI extends XInit = I>(init?: NI) => XEmitter<D, A, NI>;
@@ -86,12 +86,14 @@ export type XGroup<
 	$on: (listener: (xevt: XGroupEvent<G>) => void) => XUnsubsribe;
 };
 
-export type XGroupEvent<G extends XGroupSpec> = {
+export type Cast<A, B> = A extends B ? A : B;
+
+export type XGroupEvent<G extends XGroupSpec> = Cast<{
 	[K in keyof G]: G[K] extends XEmitter<infer D, infer A, infer I>
 		? XEvent<D, A, I>
 		: XGroupEvent<G[K]>
 	;
-}[keyof G];
+}[keyof G], XEvent<string, any, any>>;
 
 export type WithXEvents<G> = G extends XGroup<any, infer S, any>
 	? WithXEventsBySpec<S, true>

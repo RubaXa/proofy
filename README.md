@@ -68,6 +68,20 @@ appXEvents.dom.unload.$bind(window, 'unload');
 
 ---
 
+### Поисываем фичу
+
+```ts
+import { qrXEvents } from '@account/qr/xevents';
+
+const qrauthFeature = createFeature({
+	id: 'qrauth',
+	name: 'Авторизация по QR',
+	events: qrXEvents,
+});
+```
+
+---
+
 ### Соединяем с React или с чем угодно
 
 ```tsx
@@ -80,6 +94,9 @@ export function AuthForm(props: AuthFormProps) {
 
 	// Где-то в коде трегирим событие
 	xevents.clickBy({elem: 'login'});
+
+	// Фича QR доступна
+	qrauthFeature.active && <QRAuth/>;
 };
 
 <AppForm
@@ -89,7 +106,31 @@ export function AuthForm(props: AuthFormProps) {
 			console.log(appXEvents.auth.clickBy.$descr(data)); // Клик по "Вход"
 		},
 	}}
-/>
+/>;
+```
+
+---
+
+### Конфигурируем фичу
+
+```ts
+setupExperiment(feature, {
+	split: 'a1',
+	enabled: true,
+	released: false,
+});
+```
+
+---
+
+### Подключаем Reporter (XRay)
+
+```ts
+xraySplitAutoConfiguration(xray);
+addExperimentsObserver(createXRayReporter({
+	send: xray.send,
+	verbose: false,
+}));
 ```
 
 ---

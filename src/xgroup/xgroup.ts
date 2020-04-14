@@ -98,3 +98,8 @@ function overrideXEvents(group: XGroup<any, any, any>, xevents?: WithXEventsBySp
 		return xover;
 	}, {});
 }
+
+
+export function isXGroup(val: any): val is XGroup<string, XGroupSpec, XInit> {
+	return val ? typeof val.$observed === 'function' : false;
+}

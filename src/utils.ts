@@ -1,4 +1,3 @@
-
 export function defineProperies<
 	T extends object,
 	P extends PropertyDescriptorMap,
@@ -9,6 +8,26 @@ export function defineProperies<
 			? ReturnType<NonNullable<P[K]['get']>>
 			: P[K]['value']
 		;
+	});
+}
+
+export function defineGetters<
+	T extends object,
+	P extends {
+		[key:string]: () => any;
+	},
+>(obj: T, props: P) {
+	Object.defineProperties(obj, Object.keys(props).reduce((map, key) => {
+		map[key] = {
+			get: props[key],
+			set: (_) => {},
+			enumerable: true,
+			configurable: false,
+		};
+		return map;
+	}, {} as PropertyDescriptorMap));
+	return obj as (T & {
+		[K in keyof P]: ReturnType<P[K]>;
 	});
 }
 
