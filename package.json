@@ -1,6 +1,6 @@
 {
   "name": "proofy",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Proofy — A set of tools for creating and conducting experiments.",
   "keywords": [
     "proofy",
@@ -21,7 +21,7 @@
     "build": "npm run ts-build",
     "build-clean": "npm run git-clean",
     "ts-build": "tsc",
-    "git-clean": "git cliean -fd",
+    "git-clean": "git clean -fd",
     "prepublishOnly": "npm run test && npm run build",
     "postpublish": "echo 'npm run git-clean?\n';"
   },
