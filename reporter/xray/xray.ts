@@ -1,5 +1,6 @@
-import { ExperimentsObserver, addFeatureChangeObserver } from '../../src/feature/feature';
+import { addFeatureChangeObserver } from '../../src/feature/feature';
 import { createConsoleReporter } from '../console';
+import { ExperimentsObserver } from '../../src/feature/feature.typings';
 
 export type LikeXRay = {
 	send: (t: string, i: {[key:string]: string}) => void;
@@ -26,7 +27,10 @@ export function createXRayReporter(init: XRayReporterInit): ExperimentsObserver 
 		const chain = [feature.id].concat(xevt.target.$path());
 
 		(log !== null) && log(feature, xevt);
-		send(chain.map(prepare).join(glue), xevt.data);
+		send(
+			chain.map(prepare).join(glue),
+			toIntervals(xevt.data, glue),
+		);
 	};
 }
 
@@ -52,4 +56,21 @@ function defaultPrepare(val: string) {
 
 function toKebabCase(_: string, match: string, offset: number) {
 	return (offset ? '-' : '') + match.toLowerCase();
+}
+
+function toIntervals(data: object, glue: string) {
+	const res = {};
+	
+	for (const key in data) {
+		if (data.hasOwnProperty(key)) {
+			const val = data[key];
+			if (Number.isNaN(val)) {
+				res[key + glue + val] = 1;
+			} else {
+				res[key] = +val >= 0 ? +val : 1;
+			}
+		}
+	}
+
+	return res;
 }

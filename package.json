@@ -1,6 +1,6 @@
 {
   "name": "proofy",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Proofy — A set of tools for creating and conducting experiments.",
   "keywords": [
     "proofy",
@@ -10,11 +10,6 @@
   "author": "RubaXa <ibn@rubaxa.org>",
   "license": "MIT",
   "main": "index.js",
-  "files": [
-    "*.js",
-    "*.js.map",
-    "*.d.ts"
-  ],
   "scripts": {
     "test": "jest --coverage",
     "start": "npm test -- --watchAll",

@@ -1,6 +1,8 @@
-import { XGroup, XGroupSpec, XInit, XEvent } from '../typing';
+import { XEvent } from '../typing';
 import { defineGetters } from '../utils';
 import { isXGroup } from '../xgroup/xgroup';
+import { Feature, ExperimentDescription, ExperimentsObserver, FeatureDescription, FeatureChangeObserver } from './feature.typings';
+import { createConsoleReporter } from '../../reporter/console';
 
 const featuresRegistry = {} as {[id: string]: Feature<any>};
 const experimentsRegistry = {} as {
@@ -12,38 +14,13 @@ const experimentsRegistry = {} as {
 const experimentsObservers = [] as ExperimentsObserver[];
 const featureChangeObservers = [] as FeatureChangeObserver[];
 
-export type ExperimentsObserver = (feature: Feature<string>, xevt: XEvent<string, any, any>) => void;
-export type FeatureChangeObserver = (feature: Feature<string>) => void;
-
-export type FeatureDescription<
-	ID extends string,
-> = {
-	id: ID;
-	name: string;
-	events: XGroup<string, XGroupSpec, XInit>;
-}
-
-export type Feature<
-	ID extends string,
-> = Readonly<(
-	& FeatureDescription<ID>
-	& ExperimentDescription
-)>;
-
-export type ExperimentDescription = {
-	split: string | null;
-	active: boolean;
-	enabled: boolean;
-	released: boolean;
-};
-
 export function createFeature<
 	ID extends string,
 >(
 	descr: FeatureDescription<ID>,
 ): Feature<ID> {
 	if (featuresRegistry[descr.id] !== void 0) {
-		console.warn(new Error(`Feature "${descr.id}" already registred`));
+		console.warn(new Error(`[proofy] Feature "${descr.id}" already registred`));
 	}
 
 	if (isXGroup(descr.events)) {
@@ -71,6 +48,10 @@ export function createFeature<
 	});
 
 	featuresRegistry[feature.id] = feature;
+	if (experimentsRegistry[feature.id] !== void 0) {
+		experimentsRegistry[feature.id].feature = feature;
+	}
+
 	notifyFeatureChangeObservers(feature);
 
 	return feature;
@@ -116,6 +97,24 @@ export function addExperimentsObserver(fn: ExperimentsObserver) {
 		const idx = experimentsObservers.indexOf(fn);
 		(idx !== -1) && experimentsObservers.splice(idx, 1);
 	};
+}
+
+const _verboseReporter = createConsoleReporter();
+let _verboseExperimentsUnobserve = null as (null | (() => void))
+
+export type VerboseFilter = (feature: Feature<string>, xevt: XEvent<string, any, any>) => boolean;
+
+export function verboseExperiments(state?: boolean | VerboseFilter) {
+	_verboseExperimentsUnobserve && _verboseExperimentsUnobserve();
+	_verboseExperimentsUnobserve = null;
+	
+	if (state === true) {
+		_verboseExperimentsUnobserve = addExperimentsObserver(_verboseReporter);
+	} else if (typeof state === 'function') {
+		_verboseExperimentsUnobserve = addExperimentsObserver((f, e) => {
+			state(f, e) && _verboseReporter(f, e);
+		});
+	}
 }
 
 export function addFeatureChangeObserver(fn: FeatureChangeObserver) {

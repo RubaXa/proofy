@@ -1,4 +1,4 @@
-import { ExperimentsObserver } from '../../src/feature/feature';
+import { ExperimentsObserver } from '../../src/feature/feature.typings';
 
 export type ConsoleReporterInit = {
 	log?: Console['log'];
