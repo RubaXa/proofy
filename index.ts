@@ -26,6 +26,10 @@ export {
 	createXGroup,
 	createXType,
 	createXEnum,
+
+	createFeature,
+	setupExperiment,
+	verboseExperiments,
 };
 
 export const proofy = {
