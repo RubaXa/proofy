@@ -25,12 +25,12 @@ export function createXRayReporter(init: XRayReporterInit): ExperimentsObserver 
 
 	return (feature, xevt) => {
 		const chain = [feature.id].concat(xevt.target.$path());
+		const metrics = {};
+
+		createIntervals(metrics, xevt.data, glue),
 
 		(log !== null) && log(feature, xevt);
-		send(
-			chain.map(prepare).join(glue),
-			toIntervals(xevt.data, glue),
-		);
+		send(chain.map(prepare).join(glue), metrics);
 	};
 }
 
@@ -58,19 +58,16 @@ function toKebabCase(_: string, match: string, offset: number) {
 	return (offset ? '-' : '') + match.toLowerCase();
 }
 
-function toIntervals(data: object, glue: string) {
-	const res = {};
-	
+function createIntervals(metrics: object, data: object, glue: string): void {
 	for (const key in data) {
 		if (data.hasOwnProperty(key)) {
 			const val = data[key];
-			if (Number.isNaN(val)) {
-				res[key + glue + val] = 1;
+
+			if (typeof val === 'string') {
+				metrics[key + glue + val] = 1;
 			} else {
-				res[key] = +val >= 0 ? +val : 1;
+				metrics[key] = +val >= 0 ? +val : 1;
 			}
 		}
 	}
-
-	return res;
 }

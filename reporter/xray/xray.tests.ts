@@ -23,5 +23,5 @@ it('xray', () => {
 	afterEach(addExperimentsObserver(reporter));
 
 	qr.onAuth({token: 'foo-bar'});
-	expect(log).toEqual(['qrauth_auth', {token: 'foo-bar'}]);
+	expect(log).toEqual(['qrauth_auth', {'token_foo-bar': 1}]);
 });
