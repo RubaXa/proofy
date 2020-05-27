@@ -24,13 +24,13 @@ export function createConsoleReporter(init: ConsoleReporterInit = {}): Experimen
 		}
 
 		log(
-			'%c%s%c%s: %c%s%c → %o',
+			'%c%s%c%s: [ %c%s%c ] %o',
 			badgeStyle,
 			feature.id + (feature.split ? `:${feature.split}` : ``),
 			'',
 			descr,
 			pathStyle,
-			xevt.target.$path().join('→'),
+			xevt.target.$path().join(' → '),
 			'',
 			xevt.data,
 		);

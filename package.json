@@ -1,6 +1,6 @@
 {
   "name": "proofy",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Proofy — A set of tools for creating and conducting experiments.",
   "keywords": [
     "proofy",
@@ -18,7 +18,7 @@
     "ts-build": "tsc",
     "git-clean": "git clean -fd",
     "prepublishOnly": "npm run test && npm run build",
-    "postpublish": "echo 'npm run git-clean?\n';"
+    "postpublish": "npm run git-clean"
   },
   "devDependencies": {
     "@types/jest": "^24.0.23",

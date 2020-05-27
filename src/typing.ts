@@ -11,7 +11,7 @@ export type XArgSpec<N extends string, T extends XType> = Readonly<{
 
 export type XArgEnumSpec<N extends string, T extends XTypeEnumValues> = Readonly<{
 	name: N;
-	values: T;
+	values: Readonly<{[K in keyof T]: T[K]}>;
 }>;
 
 export type XArgsSpec = {
