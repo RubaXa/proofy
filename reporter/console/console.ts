@@ -1,4 +1,5 @@
 import { ExperimentsObserver } from '../../src/feature/feature.typings';
+import { XGroup } from '../../src/typing';
 
 export type ConsoleReporterInit = {
 	log?: Console['log'];
@@ -14,15 +15,23 @@ export function createConsoleReporter(init: ConsoleReporterInit = {}): Experimen
 	} = init;
 
 	return (feature, xevt) => {
+		let descr = xevt.target.$descr(xevt.data);
+		let xgropup = xevt.target.$group()
+
+		while (xgropup) {
+			descr = `${xgropup.$descr()} → ${descr}`;
+			xgropup = xgropup.$group();
+		}
+
 		log(
 			'%c%s%c%s: %c%s%c → %o',
 			badgeStyle,
 			feature.id + (feature.split ? `:${feature.split}` : ``),
 			'',
-			xevt.target.$descr(xevt.data),
+			descr,
 			pathStyle,
-			'',
 			xevt.target.$path().join('→'),
+			'',
 			xevt.data,
 		);
 	};

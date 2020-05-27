@@ -36,6 +36,7 @@ export function createXGroup<
 		},
 
 		$path: () => path,
+		$group: () => init?.group,
 
 		$on: (listener: (xevt: XGroupEvent<G>) => void): XUnsubsribe => {
 			const list = [] as XUnsubsribe[];

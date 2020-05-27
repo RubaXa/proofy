@@ -60,6 +60,10 @@ export function createXEmitter<
 		return path;
 	}
 
+	function $group() {
+		return init?.group;
+	}
+
 	function $on(listener: (xevt: XEvent<D, A, I>) => void): XUnsubsribe {
 		listeners.push(listener);
 
@@ -110,6 +114,7 @@ export function createXEmitter<
 		$on,
 		$descr,
 		$filter,
+		$group,
 	});
 }
 

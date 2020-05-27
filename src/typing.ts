@@ -62,6 +62,7 @@ export interface XEmitter<
 	(args: XArgs<A>): void;
 	$args: () => A;
 	$path: () => string[];
+	$group: () => XGroup<string, XGroupSpec, XInit> | undefined;
 	$clone: <NI extends XInit = I>(init?: NI) => XEmitter<D, A, NI>;
 	$descr: (args?: XArgs<A>) => D;
 	$on: (listener: (xevt: XEvent<D, A, I>) => void) => XUnsubsribe;
@@ -84,6 +85,7 @@ export type XGroup<
 	$clone: <NI extends XInit = I>(init?: NI) => XGroup<D, G, NI>;
 	$path: () => string[];
 	$on: (listener: (xevt: XGroupEvent<G>) => void) => XUnsubsribe;
+	$group: () => XGroup<string, XGroupSpec, XInit> | undefined;
 };
 
 export type Cast<A, B> = A extends B ? A : B;
