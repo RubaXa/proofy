@@ -12,6 +12,7 @@ import {
 } from './src/feature/feature';
 import { ExperimentDescription } from './src/feature/feature.typings';
 
+export * from './src/feature/feature.typings';
 export * from './src/feature/feature';
 export * from './src/typing';
 

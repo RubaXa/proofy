@@ -9,7 +9,7 @@ export type LikeXRay = {
 
 export type XRayReporterInit = {
 	send: LikeXRay['send'];
-	prepare?: (val: string) => string;
+	prepare?: (key: string) => string;
 	glue?: string;
 	verbose?: boolean;
 }
@@ -47,8 +47,8 @@ export function xraySplitAutoConfiguration(xray: LikeXRay) {
 const R_CAMEL = /([A-Z]+\w)/g;
 const R_LIKE_CALLBACK = /^on([A-Z])/;
 
-function defaultPrepare(val: string) {
-	return val
+function defaultPrepare(key: string) {
+	return key
 		.replace(R_LIKE_CALLBACK, '$1')
 		.replace(R_CAMEL, toKebabCase)
 	;
