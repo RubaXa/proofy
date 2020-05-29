@@ -6,12 +6,14 @@ import { configureStore } from 'app/store';
 import { Router } from 'react-router';
 import { App } from './app';
 import { todosAppFeature, ProofyContext } from './xfeature';
+import { verboseExperiments } from 'proofy';
 
 // prepare store
 const history = createBrowserHistory();
 const store = configureStore();
 
 // prepare xevents
+verboseExperiments(true);
 todosAppFeature.events.render({time: Date.now()})
 
 ReactDOM.render(
