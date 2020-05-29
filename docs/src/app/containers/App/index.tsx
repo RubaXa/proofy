@@ -6,6 +6,7 @@ import { useTodoActions } from 'app/actions';
 import { RootState } from 'app/reducers';
 import { TodoModel } from 'app/models';
 import { Header, TodoList, Footer } from 'app/components';
+import { useXEvents } from '../../../xfeature';
 
 const FILTER_VALUES = (Object.keys(TodoModel.Filter) as (keyof typeof TodoModel.Filter)[]).map(
   (key) => TodoModel.Filter[key]
@@ -22,6 +23,7 @@ export namespace App {
 }
 
 export const App = ({ history, location }: App.Props) => {
+  const xevents = useXEvents()
   const dispatch = useDispatch();
   const todoActions = useTodoActions(dispatch);
   const { todos, filter } = useSelector((state: RootState) => {
@@ -46,6 +48,10 @@ export const App = ({ history, location }: App.Props) => {
   const filteredTodos = React.useMemo(() => (filter ? todos.filter(FILTER_FUNCTIONS[filter]) : todos), [todos, filter]);
   const activeCount = React.useMemo(() => todos.filter((todo) => !todo.completed).length, [todos]);
   const completedCount = React.useMemo(() => todos.filter((todo) => todo.completed).length, [todos]);
+
+  React.useEffect(() => {
+    xevents.ready({time: performance.now()});
+  }, []);
 
   return (
     <div className={style.normal}>

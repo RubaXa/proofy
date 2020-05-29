@@ -4,6 +4,7 @@ import style from './style.css';
 import { TodoModel } from 'app/models';
 import { TodoActions } from 'app/actions';
 import { TodoTextInput } from '../TodoTextInput';
+import { useXEvents } from '../../../xfeature';
 
 export namespace TodoItem {
   export interface Props {
@@ -15,15 +16,19 @@ export namespace TodoItem {
 }
 
 export const TodoItem = ({ todo, editTodo, deleteTodo, completeTodo }: TodoItem.Props) => {
+  const xevents = useXEvents();
   const [editing, setEditing] = useState(false);
 
   const handleDoubleClick = React.useCallback(() => {
+    xevents.todoItem.edit({act: 'start'});
     setEditing(true);
   }, [setEditing]);
 
   const handleSave = React.useCallback(
     (id: number, text: string) => {
+      xevents.todoItem.edit({act: 'end'});
       if (text.length === 0) {
+        xevents.todoItem.delete({});
         deleteTodo(id);
       } else {
         editTodo({ id, text });
@@ -42,20 +47,31 @@ export const TodoItem = ({ todo, editTodo, deleteTodo, completeTodo }: TodoItem.
   return (
     <li className={classes}>
       {editing ? (
-        <TodoTextInput onSave={(text) => todo.id && handleSave(todo.id, text)} />
+        <TodoTextInput
+          value={todo.text}
+          onSave={(text) => { todo.id && handleSave(todo.id, text)}}
+        />
       ) : (
         <div className={style.view}>
           <input
             type="checkbox"
             className={style.toggle}
             checked={todo.completed}
-            onChange={() => todo.id && completeTodo(todo.id)}
+            onChange={() => {
+              if (todo.id) {
+                xevents.todoItem.complete({state: todo.completed ? 'no' : 'yes'});
+                completeTodo(todo.id)
+              }
+            }}
           />
           <label onDoubleClick={() => handleDoubleClick()}>{todo.text}</label>
           <button
             className={style.destroy}
             onClick={() => {
-              if (todo.id) deleteTodo(todo.id);
+              if (todo.id) {
+                deleteTodo(todo.id);
+                xevents.todoItem.delete({});
+              }
             }}
           />
         </div>

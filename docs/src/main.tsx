@@ -14,7 +14,7 @@ const store = configureStore();
 
 // prepare xevents
 verboseExperiments(true);
-todosAppFeature.events.render({time: Date.now()})
+todosAppFeature.events.render({time: performance.now()})
 
 ReactDOM.render(
   <ProofyContext.Provider value={todosAppFeature}>

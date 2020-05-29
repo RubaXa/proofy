@@ -4,6 +4,7 @@ import style from './style.css';
 
 export namespace TodoTextInput {
   export interface Props {
+    value: string
     placeholder?: string;
     newTodo?: boolean;
     onSave: (text: string) => void;
@@ -14,8 +15,8 @@ export namespace TodoTextInput {
   }
 }
 
-export const TodoTextInput = ({ placeholder, newTodo, onSave }: TodoTextInput.Props): JSX.Element => {
-  const [inputText, setInputText] = useState('');
+export const TodoTextInput = ({ value, placeholder, newTodo, onSave }: TodoTextInput.Props): JSX.Element => {
+  const [inputText, setInputText] = useState(value);
 
   const handleSubmit = React.useCallback(
     (event: React.KeyboardEvent<HTMLInputElement>) => {
