@@ -86,26 +86,20 @@ const qrauthFeature = createFeature({
 
 ```tsx
 export type AuthFormProps = {
-	xevents?: WithXEvents<typeof appXEvents.auth>;
+	xevents?: typeof qrXEvents;
 };
 
 export function AuthForm(props: AuthFormProps) {
-	const xevents = appXEvents.auth.$use(props.xevents);
+	const {
+		xevents,
+	} = props;
 
 	// Где-то в коде трегирим событие
-	xevents.clickBy({elem: 'login'});
-
-	// Фича QR доступна
-	qrauthFeature.active && <QRAuth/>;
+	xevents?.clickBy({elem: 'login'});
 };
 
 <AppForm
-	xevents={{
-		clickBy(data) {
-			console.log(data); // {elem: "login"}
-			console.log(appXEvents.auth.clickBy.$descr(data)); // Клик по "Вход"
-		},
-	}}
+	xevents={qrauthFeature.events}
 />;
 ```
 
