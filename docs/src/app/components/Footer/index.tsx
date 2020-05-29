@@ -2,6 +2,7 @@ import React from 'react';
 import style from './style.css';
 import classNames from 'classnames';
 import { TodoModel } from 'app/models';
+import { useXEvents } from '../../../xfeature';
 
 export const FILTER_TITLES = {
   [TodoModel.Filter.SHOW_ALL]: 'All',
@@ -26,6 +27,7 @@ export const Footer = ({
   onClickFilter,
   onClickClearCompleted
 }: Footer.Props): JSX.Element => {
+  const xevents = useXEvents()
   const renderTodoCount = React.useCallback((): JSX.Element => {
     const itemWord = activeCount === 1 ? ' item' : 'items';
     return (
@@ -41,7 +43,12 @@ export const Footer = ({
         <a
           className={classNames({ [style.selected]: filter === selectedFilter })}
           style={{ cursor: 'pointer' }}
-          onClick={() => onClickFilter(selectedFilter)}
+          onClick={() => {
+            xevents.clickBy({el: 'filter'});
+            xevents.filterBy({type: selectedFilter});
+      
+            onClickFilter(selectedFilter);
+          }}
           children={FILTER_TITLES[selectedFilter]}
         />
       );
@@ -51,7 +58,14 @@ export const Footer = ({
 
   const renderClearButton = React.useCallback((): JSX.Element | void => {
     if (completedCount! > 0) {
-      return <button className={style.clearCompleted} onClick={onClickClearCompleted} children={'Clear completed'} />;
+      return <button
+        className={style.clearCompleted}
+        onClick={() => {
+          xevents.clickBy({el: 'clear'});
+          onClickClearCompleted();
+        }}
+        children={'Clear completed'}
+      />;
     }
   }, [completedCount]);
 
