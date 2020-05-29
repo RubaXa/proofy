@@ -1,136 +1,59 @@
-proofy
-------
-A set of tools for creating and conducting experiments.
+# Frontend Boilerplate with React, Redux & TypeScript
 
-```sh
-npm i --save proofy
+A bare minimum react-hooks-redux-webpack-typescript boilerplate with TodoMVC example.
+
+Note that this project does not include **Server-Side Rendering**, **Static code analysis**, **Testing Frameworks**
+If needed, please fork this repository and add your own that meets your requirements.
+
+Ideal for creating React apps from the scratch.
+
+## Contains
+
+- [x] [Typescript](https://www.typescriptlang.org/) 3.8
+- [x] [React](https://facebook.github.io/react/) 16.12
+- [x] [Redux](https://github.com/reactjs/redux) 4
+- [x] [Redux Thunk](https://github.com/reduxjs/redux-thunk) 2.3
+- [x] [React Router](https://github.com/ReactTraining/react-router) 5.1
+- [x] [Redux DevTools Extension](https://github.com/zalmoxisus/redux-devtools-extension)
+- [x] [TodoMVC example](http://todomvc.com)
+
+### Build tools
+
+- [x] [Webpack](https://webpack.github.io) 4
+  - [x] [Tree Shaking](https://medium.com/@Rich_Harris/tree-shaking-versus-dead-code-elimination-d3765df85c80)
+  - [x] [Webpack Dev Server](https://github.com/webpack/webpack-dev-server)
+- [x] [Typescript Loader](https://github.com/TypeStrong/ts-loader)
+- [x] [PostCSS Loader](https://github.com/postcss/postcss-loader)
+  - [x] [PostCSS Preset Env](https://preset-env.cssdb.org/)
+  - [x] [CSS modules](https://github.com/css-modules/css-modules)
+- [x] [React Hot Loader](https://github.com/gaearon/react-hot-loader)
+- [x] [Mini CSS Extract Plugin](https://github.com/webpack-contrib/mini-css-extract-plugin)
+- [x] [HTML Webpack Plugin](https://github.com/ampedandwired/html-webpack-plugin)
+
+## Installation
+
+```
+$ npm ci
 ```
 
----
+## Running
 
-### 1. Describe xevents
-
-```ts
-import { xevent } from 'proofy';
-
-export const appXEvents = xevent.group('App events', {
-	// Некий набор DOM событий
-	dom: xevent.group('DOM', {
-		ready: xevent('Ready', {}), // "Ready" — описание события
-		unload: xevent('Page unload', {}),
-	}),
-
-	// События авторизации
-	auth: xevent.group('Авторизация', {
-		try: xevent(
-			({step, type, method}) => `Попытка авторизации с шага "${step.name}" по "${type.name}" через "${method.name}"`,
-			{
-				step: xevent.enum('Шаг', {
-					'login': 'Ввод Логина',
-					'passwd': 'Ввод пароля',
-					'f-restore': 'Быстрый Вход',
-				}),
-				type: xevent.enum('Тип', {
-					'password': 'Пароль',
-					'qr': 'QR',
-					'webauthn': 'WebAuthn',
-				}),
-				method: xevent.enum('Метод отправки формы', {
-					'submit': 'Отправка Формы',
-					'redirect': 'JS Редирект',
-				}),
-			},
-		),
-
-		// Клик по кнопке, ссылки и т.п.
-		сlickBy: xevent(
-			({elem}) => `Клик по "${elem.name}"`,
-			{
-				elem: xevent.enum('Элемент', {
-					'signup': 'Регистрация',
-					'login': 'Вход'
-					'qrlink': 'QR',
-				}),
-			},
-		),
-	}),
-});
-
-// Дальше, где-то в коде используем их.
-document.addEventListener('DOMContentLoaded', () => {
-	appXEvents.dom.ready(); // ['dom', 'ready']
-});
-
-// Или упрощенная запись
-appXEvents.dom.ready.$bind(document, 'DOMContentLoaded');
-appXEvents.dom.unload.$bind(window, 'unload');
+```
+$ npm start
 ```
 
----
+## Build
 
-### Поисываем фичу
-
-```ts
-import { qrXEvents } from '@account/qr/xevents';
-
-const qrauthFeature = createFeature({
-	id: 'qrauth',
-	name: 'Авторизация по QR',
-	events: qrXEvents,
-});
+```
+$ npm run build
 ```
 
----
+## Deploy (to the [GitHub Pages](https://pages.github.com/))
 
-### Соединяем с React или с чем угодно
-
-```tsx
-export type AuthFormProps = {
-	xevents?: typeof qrXEvents;
-};
-
-export function AuthForm(props: AuthFormProps) {
-	const {
-		xevents,
-	} = props;
-
-	// Где-то в коде трегирим событие
-	xevents?.clickBy({elem: 'login'});
-};
-
-<AppForm
-	xevents={qrauthFeature.events}
-/>;
+```
+$ npm run deploy
 ```
 
----
+# License
 
-### Конфигурируем фичу
-
-```ts
-setupExperiment(feature, {
-	split: 'a1',
-	enabled: true,
-	released: false,
-});
-```
-
----
-
-### Подключаем Reporter (XRay)
-
-```ts
-xraySplitAutoConfiguration(xray);
-addExperimentsObserver(createXRayReporter({
-	send: xray.send,
-	verbose: false,
-}));
-```
-
----
-
-
-### Development
-
- - `npm i`
- - `npm test`, [code coverage](./coverage/lcov-report/index.html)
+MIT
