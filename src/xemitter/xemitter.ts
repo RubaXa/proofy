@@ -60,6 +60,10 @@ export function createXEmitter<
 		return path;
 	}
 
+	function $name() {
+		return init?.name;
+	}
+
 	function $group() {
 		return init?.group;
 	}
@@ -114,6 +118,7 @@ export function createXEmitter<
 		$on,
 		$descr,
 		$filter,
+		$name,
 		$group,
 	});
 }
@@ -141,4 +146,8 @@ function newProxyArgs<A extends XArgsSpec>(args: A) {
 			};
 		},
 	}) as XDescrArgs<A>;
+}
+
+export function isXEmitter(val: object): val is XEmitter<string, any, XInit> {
+	return val && typeof val['$args'] === 'function';
 }

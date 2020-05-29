@@ -36,6 +36,8 @@ export function createXGroup<
 		},
 
 		$path: () => path,
+		
+		$name: () => init?.name,
 		$group: () => init?.group,
 
 		$on: (listener: (xevt: XGroupEvent<G>) => void): XUnsubsribe => {

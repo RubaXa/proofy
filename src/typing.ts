@@ -11,7 +11,9 @@ export type XArgSpec<N extends string, T extends XType> = Readonly<{
 
 export type XArgEnumSpec<N extends string, T extends XTypeEnumValues> = Readonly<{
 	name: N;
-	values: Readonly<{[K in keyof T]: T[K]}>;
+	values: Readonly<{
+		[K in keyof T]: T[K]
+	}>;
 }>;
 
 export type XArgsSpec = {
@@ -19,7 +21,10 @@ export type XArgsSpec = {
 };
 
 export type XArgType<A> = A extends XArgSpec<any, infer T>
-	? ReturnType<T>
+	? (T extends DateConstructor
+		? Date
+		: ReturnType<T>
+	)
 	: (A extends XArgEnumSpec<any, infer T>
 		? keyof T
 		: never
@@ -62,6 +67,7 @@ export interface XEmitter<
 	(args: XArgs<A>): void;
 	$args: () => A;
 	$path: () => string[];
+	$name: () => string | undefined;
 	$group: () => XGroup<string, XGroupSpec, XInit> | undefined;
 	$clone: <NI extends XInit = I>(init?: NI) => XEmitter<D, A, NI>;
 	$descr: (args?: XArgs<A>) => D;
@@ -79,8 +85,9 @@ export type XGroup<
 	I extends XInit,
 > = G & {
 	$observed(): boolean;
-	$use(extra?: WithXEventsBySpec<G, true>): WithXEventsBySpec<G, false>;
+	// $use(extra?: WithXEventsBySpec<G, true>): WithXEventsBySpec<G, false>;
 	$keys: () => (keyof G)[]
+	$name: () => string | undefined;
 	$descr: () => D;
 	$clone: <NI extends XInit = I>(init?: NI) => XGroup<D, G, NI>;
 	$path: () => string[];

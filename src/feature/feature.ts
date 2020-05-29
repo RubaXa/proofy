@@ -7,7 +7,7 @@ import { createConsoleReporter } from '../../reporter/console';
 const featuresRegistry = {} as {[id: string]: Feature<any, any>};
 const experimentsRegistry = {} as {
 	[id: string]: {
-		feature: Feature<string, any>;
+		feature: Feature<string, XGroup<string, XGroupSpec, XInit>>;
 		description: ExperimentDescription;
 	};
 };
