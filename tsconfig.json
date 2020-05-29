@@ -19,6 +19,7 @@
     "dist",
     "node_modules",
     "autotest-example",
-    "__jest__"
+    "__jest__",
+    "docs"
   ]
 }
