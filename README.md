@@ -13,6 +13,8 @@ npm i --save proofy
 - Open: https://rubaxa.github.io/proofy/
 - and `DevTools / Console`
 
+![Console](https://user-images.githubusercontent.com/1109562/83254192-0862c800-a1b7-11ea-9584-ba0695cd6d10.png)
+
 ---
 
 ### 1. Describe xevents
