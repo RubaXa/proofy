@@ -8,6 +8,13 @@ npm i --save proofy
 
 ---
 
+### Demo project
+
+- Open: https://rubaxa.github.io/proofy/
+- and `DevTools / Console`
+
+---
+
 ### 1. Describe xevents
 
 ```ts
