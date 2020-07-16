@@ -3,7 +3,7 @@ import { createConsoleReporter } from '../console';
 import { ExperimentsObserver } from '../../src/feature/feature.typings';
 
 export type LikeXRay = {
-	send: (t: string, i: {[key:string]: string}) => void;
+	send: (t: string, p: {i: {[key:string]: string}}) => void;
 	addSplit: (v: string) => void;
 }
 
@@ -30,7 +30,7 @@ export function createXRayReporter(init: XRayReporterInit): ExperimentsObserver 
 		createIntervals(metrics, xevt.data, glue),
 
 		(log !== null) && log(feature, xevt);
-		send(chain.map(prepare).join(glue), metrics);
+		send(chain.map(prepare).join(glue), {i: metrics});
 	};
 }
 
